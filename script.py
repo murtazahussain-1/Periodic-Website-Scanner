@@ -33,14 +33,14 @@ def check_website(url, search_text):
 
 def send_email(subject, body):
     try:
-        sender_email = "khaleel.org@gmail.com"
+        sender_email = "Sender@gmail.com"
         receiver_email = [
-            "khaleel.org@gmail.com",
-            "hk.jigar@gmail.com",
-            "tmail.khalil@gmail.com",
-            "khaleel.gcloud@gmail.com"
+            "receiver1@gmail.com",
+            "receiver2@gmail.com",
+            "receiver3@gmail.com",
+            "receiver4@gmail.com"
         ]
-        password = "gdkp dcjy ycmr qqrz"
+        password = "abcd efgh ijkl mnop" # Google app password required
 
         # Set up the MIME
         message = MIMEMultipart()
