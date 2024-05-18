@@ -1,16 +1,20 @@
 import requests
 from bs4 import BeautifulSoup
-from plyer import notification
 import time
+from plyer import notification
 import random
+import logging
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import datetime
 
 def check_website(url, search_text):
-
     try:
-        headers = random_line(afile).rstrip() # random header for bypassing security checks on the website
+        headers = random_line(afile).rstrip()  # Random header for bypassing security checks on the website
         print(f"Header is: {headers}")
 
-        response  = requests.get(url, headers={'User-Agent': headers}, timeout = 100)
+        response = requests.get(url, headers={'User-Agent': headers}, timeout=100)
         response.raise_for_status()
 
         # Parse the HTML content of the page
@@ -25,6 +29,39 @@ def check_website(url, search_text):
         print(f"Error: {e}")
     return False
 
+def send_email(subject, body):
+    try:
+        sender_email = "sender@gmail.com"
+        receiver_email = [
+            "receiver1@gmail.com",
+            "receiver2@gmail.com",
+            "receiver3@gmail.com",
+            "receiver4@gmail.com"
+        ]
+        password = "abcd efgh ijkl mnop" # gmail app password, guide: https://support.google.com/mail/answer/185833?hl=en
+
+        # Set up the MIME
+        message = MIMEMultipart()
+        message['From'] = sender_email
+        message['To'] = ", ".join(receiver_email)
+        message['Subject'] = subject + ' | ' + datetime.datetime.now().strftime("%d/%m/%y %H:%M:%S")
+
+        # Add body to email
+        message.attach(MIMEText(body, 'plain'))
+
+        # Create a secure SSL context and login
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, password)
+
+        # Send email
+        server.sendmail(sender_email, receiver_email, message.as_string())
+        server.quit()
+
+        logging.info(f"Email sent to {receiver_email} with subject: {subject}")
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
+
 
 def notify(title, message):
     notification.notify(
@@ -32,6 +69,7 @@ def notify(title, message):
         message=message,
         timeout=10
     )
+    send_email(title, message)
 
 def random_line(afile):
     lines = afile.readlines()
@@ -40,19 +78,21 @@ def random_line(afile):
 afile = open("useragents.txt")
 
 def main():
-    url = "https://service2.diplo.de/rktermin/extern/appointment_showForm.do?locationCode=isla&realmId=108&categoryId=1600"  # Replace with the URL of the website you want to monitor
-    search_text = "language course"  # Replace with the text you want to search for
+    # url = "https://service2.diplo.de/rktermin/extern/appointment_showForm.do?locationCode=isla&realmId=108&categoryId=1600"  # Replace with the URL of the website you want to monitor
+    # url = "https://web.archive.org/web/20230205081917/https://service2.diplo.de/rktermin/extern/choose_categoryList.do?locationCode=isla&realmId=108"
+    url = "https://service2.diplo.de/rktermin/extern/choose_categoryList.do?locationCode=isla&realmId=108"
+    search_text = "study"  # Replace with the text you want to search for
     while True:
-        print("Checking for =", search_text)
+        print(f"Checking for = {search_text}")
         if check_website(url, search_text):
             while True:
-                notify("Text Found", f"The text '{search_text}' is now available on {url}")        
-                print("found")
+                notify("Winter appointmens are open", f"The Word '{search_text}' is now available on {url}")
+                print("Winter Appointments are open, notifying via Email ...")
                 time.sleep(5)
 
         # Check the website every 30 seconds (adjust as needed)
-        print("Going to sleep for 30 seconds")
-        time.sleep(30)
+        print("Going to sleep for 5 seconds")
+        time.sleep(5)
 
 if __name__ == "__main__":
     main()
