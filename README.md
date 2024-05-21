@@ -8,12 +8,15 @@ This script monitors a specified website for the presence of a particular text a
 - Uses random user-agent headers from a file (`useragents.txt`) to avoid detection by security mechanisms.
 - Sends desktop notifications when the specified text is found.
 - Includes error handling and logging.
+- Sends Email once a keyword found in the web page
+- Use Gmail app password for credentials
+- Guide: https://support.google.com/mail/answer/185833?hl=en
 
 ## Prerequisites
 
 - Python 3.x
 - `requests` library
-- `beautifulsoup4` library
+- `bs4` library
 - `plyer` library
 
 ## Installation
@@ -48,8 +51,9 @@ The script performs the following steps:
 1. Reads a random user-agent header from `useragents.txt`.
 2. Sends an HTTP GET request to the specified URL using the random user-agent header.
 3. Parses the HTML content of the page and searches for the specified text.
-4. Sends a desktop notification if the text is found.
-5. Repeats the check every 30 seconds.
+4. Sends emails to all receipient, once the keyword found on the web-page.
+5. Sends a desktop notification if the text is found.
+6. Repeats the check every 30 seconds.
 
 ### Example `useragents.txt`
 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
